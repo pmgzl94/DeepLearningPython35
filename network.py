@@ -127,7 +127,10 @@ class Network(object):
         for l in range(2, self.num_layers):
             z = zs[-l]
             sp = sigmoid_prime(z)
+            print("former {}".format(delta))
             delta = np.dot(self.weights[-l+1].transpose(), delta) * sp
+            # delta = np.dot(self.weights[-l+1].transpose(), delta)
+            print("new {}".format(delta))
             nabla_b[-l] = delta
             nabla_w[-l] = np.dot(delta, activations[-l-1].transpose()) #multiply with a of (l-1)
         return (nabla_b, nabla_w)
