@@ -111,10 +111,11 @@ class Network(object):
             zs.append(z)
             activation = sigmoid(z)
             activations.append(activation)
-        # backward pass
+        #first application of backward algorithm on the last layer (output layer)
         delta = self.cost_derivative(activations[-1], y) * sigmoid_prime(zs[-1])
         nabla_b[-1] = delta
         nabla_w[-1] = np.dot(delta, activations[-2].transpose())
+    
         # Note that the variable l in the loop below is used a little
         # differently to the notation in Chapter 2 of the book.  Here,
         # l = 1 means the last layer of neurons, l = 2 is the
@@ -128,7 +129,7 @@ class Network(object):
             sp = sigmoid_prime(z)
             delta = np.dot(self.weights[-l+1].transpose(), delta) * sp
             nabla_b[-l] = delta
-            nabla_w[-l] = np.dot(delta, activations[-l-1].transpose())
+            nabla_w[-l] = np.dot(delta, activations[-l-1].transpose()) #multiply with a of (l-1)
         return (nabla_b, nabla_w)
 
     def evaluate(self, test_data):
