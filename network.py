@@ -56,6 +56,7 @@ class Network(object):
         tracking progress, but slows things down substantially."""
 
         training_data = list(training_data)
+        #1 unit of training_data is an array of float
         n = len(training_data)
 
         if test_data:
@@ -68,6 +69,7 @@ class Network(object):
                 training_data[k:k+mini_batch_size]
                 for k in range(0, n, mini_batch_size)]
             for mini_batch in mini_batches:
+                 #update weight and biases
                 self.update_mini_batch(mini_batch, eta)
             if test_data:
                 print("Epoch {} : {} / {}".format(j,self.evaluate(test_data),n_test));
@@ -81,6 +83,9 @@ class Network(object):
         is the learning rate."""
         nabla_b = [np.zeros(b.shape) for b in self.biases]
         nabla_w = [np.zeros(w.shape) for w in self.weights]
+        # x = array of float corresponding of the hue
+        # y = expected result aka for 6 we get: [0, 0, 0, 0, 0, 0, 1, 0, 0, 0]
+
         for x, y in mini_batch:
             delta_nabla_b, delta_nabla_w = self.backprop(x, y)
             nabla_b = [nb+dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
@@ -107,8 +112,7 @@ class Network(object):
             activation = sigmoid(z)
             activations.append(activation)
         # backward pass
-        delta = self.cost_derivative(activations[-1], y) * \
-            sigmoid_prime(zs[-1])
+        delta = self.cost_derivative(activations[-1], y) * sigmoid_prime(zs[-1])
         nabla_b[-1] = delta
         nabla_w[-1] = np.dot(delta, activations[-2].transpose())
         # Note that the variable l in the loop below is used a little
@@ -116,7 +120,9 @@ class Network(object):
         # l = 1 means the last layer of neurons, l = 2 is the
         # second-last layer, and so on.  It's a renumbering of the
         # scheme in the book, used here to take advantage of the fact
-        # that Python can use negative indices in lists.
+        # that Python can use negative indices in lists
+
+        #apply the result of delta on preceeding layers
         for l in range(2, self.num_layers):
             z = zs[-l]
             sp = sigmoid_prime(z)
