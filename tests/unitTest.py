@@ -21,17 +21,17 @@ print("here")
 
 delta_biases, delta_weights = net.backprop(sample[0], sample[1])
 
-print("weights {}".format(delta_weights))
+# print("weights {}".format(delta_weights))
 
-delta_biases, delta_weights = net.backprop(list_arr[1][0], list_arr[1][1])
+# delta_biases, delta_weights = net.backprop(list_arr[1][0], list_arr[1][1])
 
-print("weights2 {}".format(delta_weights))
+# print("weights2 {}".format(delta_weights))
 
 
-delta_biases, delta_weights = net.effectiv_backprop(list_arr[:2])
-# net.effectiv_backprop(list_arr[:2])
+# delta_biases, delta_weights = net.effectiv_backprop(list_arr[:2])
+net.effectiv_backprop(list_arr[:2])
 
-print("weights {}".format(delta_weights))
+# print("weights {}".format(delta_weights))
 
 
 
