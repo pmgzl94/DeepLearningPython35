@@ -115,11 +115,6 @@ class Network(object):
         nabla_b[-1] = delta
         nabla_w[-1] = np.dot(delta, activations[-2].transpose())
 
-        # print(activations[-2].T.shape)
-        # print(nabla_w[-1])
-        # print(nabla_w[-1].shape)
-
-        
         #apply the result of delta on preceeding layers
         for l in range(2, self.num_layers):
             z = zs[-l]
@@ -131,13 +126,28 @@ class Network(object):
             nabla_w[-l] = np.dot(delta, activations[-l-1].transpose()) #multiply with a of (l-1)
         return (nabla_b, nabla_w)
 
+    def effectiv_update_mini_batch(self, mini_batch, eta):
+        nabla_b = [np.zeros(b.shape) for b in self.biases]
+        nabla_w = [np.zeros(w.shape) for w in self.weights]
+       
+        nabla_b, nabla_w = self.effectiv_backprop(mini_batch)
+
+        # print(nabla_w[0].shape)
+        sum_nabla_b = [np.sum(b, axis=0) for b in nabla_b]
+        sum_nabla_w = [np.sum(w, axis=0) for w in nabla_w]
+        # sum_nabla_w = np.sum(nabla_w, axis=0)
+        self.weights = [w-(eta/len(mini_batch))*nw.T
+                        for w, nw in zip(self.weights, sum_nabla_w)]
+        self.biases = [b-(eta/len(mini_batch))*nb
+                       for b, nb in zip(self.biases, sum_nabla_b)]
+
     def effectiv_backprop(self, mini_batch):
         
         activations = [np.array([tr_input.T for tr_input, expected_val in mini_batch])]
         y = np.array([expected_val for tr_input, expected_val in mini_batch])
 
-        nabla_b = [np.ndarray] * self.num_layers
-        nabla_w = [np.ndarray] * self.num_layers
+        nabla_b = [np.zeros((len(mini_batch), b.shape[0], b.shape[1])) for b in self.biases]
+        nabla_w = [np.zeros((len(mini_batch), w.shape[0], w.shape[1])) for w in self.weights]
 
         y = y.transpose(0, 2, 1)
         activation = activations[0]
@@ -149,7 +159,8 @@ class Network(object):
             activation = sigmoid(z)
             activations.append(activation)
         delta = self.cost_derivative(activations[-1], y) * sigmoid_prime(zs[-1])
-        # print(type(delta))
+        
+        # print(delta.shape)
         nabla_b[-1] = delta
         nabla_w[-1] = delta * activations[-2].transpose(0, 2, 1)
 
@@ -159,8 +170,8 @@ class Network(object):
             delta = np.dot(delta, self.weights[-l+1]) * sp
             nabla_b[-l] = delta
             nabla_w[-l] = delta * activations[-l-1].transpose(0, 2, 1)   #multiply with a of (l-1)
-        print(nabla_w)
-        print(nabla_w[0].shape)
+        # print(nabla_w)
+        # print(nabla_w[0].shape)
         return (nabla_b, nabla_w)
 
     def evaluate(self, test_data):
@@ -176,6 +187,12 @@ class Network(object):
         """Return the vector of partial derivatives \partial C_x /
         \partial a for the output activations."""
         return (output_activations-y)
+
+    #these method are implemented to test it
+    def get_biases(self):
+        return self.biases
+    def get_weights(self):
+        return self.weights
 
 #### Miscellaneous functions
 def sigmoid(z):
