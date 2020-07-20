@@ -111,13 +111,13 @@ class Network(object):
         #first application of backward algorithm on the last layer (output layer)
         delta = self.cost_derivative(activations[-1], y) * sigmoid_prime(zs[-1])
         # print(delta)
-        print(delta.shape)
+        # print(delta.shape)
         nabla_b[-1] = delta
         nabla_w[-1] = np.dot(delta, activations[-2].transpose())
 
-        print(activations[-2].T.shape)
+        # print(activations[-2].T.shape)
         # print(nabla_w[-1])
-        print(nabla_w[-1].shape)
+        # print(nabla_w[-1].shape)
 
         
         #apply the result of delta on preceeding layers
@@ -133,25 +133,23 @@ class Network(object):
 
     def effectiv_backprop(self, mini_batch):
         
-        activations = list([np.array([tr_input for tr_input, expected_val in mini_batch])])
+        activations = [np.array([tr_input.T for tr_input, expected_val in mini_batch])]
         y = np.array([expected_val for tr_input, expected_val in mini_batch])
 
-        # nabla_b = [np.empty(len(mini_batch), dtype=np.ndarray)  for b in self.biases]
         nabla_b = [np.ndarray] * self.num_layers
         nabla_w = [np.ndarray] * self.num_layers
 
-        activations[0] = activations[0].transpose(0, 2, 1)
         y = y.transpose(0, 2, 1)
         activation = activations[0]
 
         zs = []
         for b, w in zip(self.biases, self.weights):
-            z = np.dot(activation,w.transpose()) + b.transpose()
+            z = np.dot(activation, w.T) + b.T
             zs.append(z)
             activation = sigmoid(z)
             activations.append(activation)
         delta = self.cost_derivative(activations[-1], y) * sigmoid_prime(zs[-1])
-        print(type(delta))
+        # print(type(delta))
         nabla_b[-1] = delta
         nabla_w[-1] = delta * activations[-2].transpose(0, 2, 1)
 
