@@ -12,5 +12,5 @@ In test.py there are examples of networks configurations with proper comments. I
 
 
 ## To test new fully matrix base approach to backpropagation over mini-batch:
-   "make tests_run"
-   "./unit_tests"
+   >make tests_run  
+   >./unit_tests
