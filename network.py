@@ -21,7 +21,7 @@ import numpy as np
 
 class Network(object):
 
-    def __init__(self, sizes):
+    def __init__(self, sizes, impvt = False):
         """The list ``sizes`` contains the number of neurons in the
         respective layers of the network.  For example, if the list
         was [2, 3, 1] then it would be a three-layer network, with the
@@ -37,6 +37,8 @@ class Network(object):
         self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
         self.weights = [np.random.randn(y, x)
                         for x, y in zip(sizes[:-1], sizes[1:])]
+
+        self.impvt = True
 
     def feedforward(self, a):
         """Return the output of the network if ``a`` is input."""
@@ -70,7 +72,10 @@ class Network(object):
                 for k in range(0, n, mini_batch_size)]
             for mini_batch in mini_batches:
                  #update weight and biases
-                self.update_mini_batch(mini_batch, eta)
+                if self.impvt:
+                    self.effectiv_update_mini_batch(mini_batch, eta)
+                else:
+                    self.update_mini_batch(mini_batch, eta)
             if test_data:
                 print("Epoch {} : {} / {}".format(j,self.evaluate(test_data),n_test));
             else:

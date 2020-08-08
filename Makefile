@@ -21,10 +21,10 @@ tests_run:
 	@rm -rf unit_tests; touch unit_tests; echo "#!/bin/env python3" > unit_tests ; cat tests/unitTest.py >> unit_tests; chmod 700 unit_tests
 
 clean:
-	rm -rf *.py
+	# rm -rf *.py
 
 fclean:	clean
-	rm -rf $(NAME)
+	# rm -rf $(NAME)
 
 re:	fclean all
 
