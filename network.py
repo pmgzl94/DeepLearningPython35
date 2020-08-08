@@ -21,7 +21,7 @@ import numpy as np
 
 class Network(object):
 
-    def __init__(self, sizes, impvt = False):
+    def __init__(self, sizes, impvt = False, biases = None, weights = None):
         """The list ``sizes`` contains the number of neurons in the
         respective layers of the network.  For example, if the list
         was [2, 3, 1] then it would be a three-layer network, with the
@@ -34,11 +34,17 @@ class Network(object):
         ever used in computing the outputs from later layers."""
         self.num_layers = len(sizes)
         self.sizes = sizes
-        self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
-        self.weights = [np.random.randn(y, x)
+        if biases:
+            self.biases = biases
+        else:
+            self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
+        if weights:
+            self.weights = weights
+        else:
+            self.weights = [np.random.randn(y, x)
                         for x, y in zip(sizes[:-1], sizes[1:])]
 
-        self.impvt = True
+        self.impvt = impvt
 
     def feedforward(self, a):
         """Return the output of the network if ``a`` is input."""
@@ -137,7 +143,7 @@ class Network(object):
         sum_nabla_w = [np.sum(w, axis=0) for w in nabla_w]
         self.weights = [w-(eta/len(mini_batch))*nw.T
                         for w, nw in zip(self.weights, sum_nabla_w)]
-        self.biases = [b-(eta/len(mini_batch))*nb
+        self.biases = [b-(eta/len(mini_batch))*nb.T
                        for b, nb in zip(self.biases, sum_nabla_b)]
 
     def effectiv_backprop(self, mini_batch):

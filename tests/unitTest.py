@@ -8,8 +8,9 @@ import unittest
 class TestNetwork(unittest.TestCase):
     """TEST ON UPDATE_MINIBATCH METHOD"""
     def test_update_mini_batch(self):
+
         net = Network([784, 100, 10])
-        net2 = Network([784, 100, 10])
+        net2 = Network([784, 100, 10], True, net.get_biases(), net.get_weights())
 
         training_data, validation_data, test_data = mnist_loader.load_data_wrapper()
 
@@ -17,23 +18,22 @@ class TestNetwork(unittest.TestCase):
 
         eta = 0.1
         batch = list_arr[:10]
+        batch2 = list_arr[:10]
 
         net.update_mini_batch(batch, eta) #original method
 
         weights1 = net.get_weights()
         biases1 = net.get_biases()
 
-        net2.effectiv_update_mini_batch(batch, eta) #updated method
+        net2.effectiv_update_mini_batch(batch2, eta) #updated method
 
-        weights2 = net.get_weights()
-        biases2 = net.get_biases()
+        weights2 = net2.get_weights()
+        biases2 = net2.get_biases()
 
-        arr = [(w == w2).all() for w, w2 in zip(weights1, weights2)]
-        # print(arr)
+        arr = [np.allclose(w, w2) for w, w2 in zip(weights1, weights2)]
         self.assertEqual(False in arr, False)
 
-        arr = [(b == b2 ).all() for b, b2 in zip(biases1, biases2)]
-        
+        arr = [np.allclose(b, b2) for b, b2 in zip(biases1, biases2)]    
         self.assertEqual(False in arr, False)
         # print(arr)
 
